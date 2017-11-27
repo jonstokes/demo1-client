@@ -5,7 +5,16 @@
   "dependencies": {
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
-    "react-scripts": "1.0.17"
+    "react-scripts": "1.0.17",
+    "react-relay": "*",
+    "react-stripe-elements": "*",
+    "relay-compiler": "*",
+    "relay-runtime": "*",
+    "request": "*",
+    "material-ui": "*",
+    "prop-types": "*",
+    "found": "*",
+    "found-relay": "v0.3.0-alpha.1"    
   },
   "scripts": {
     "start": "react-scripts start",
