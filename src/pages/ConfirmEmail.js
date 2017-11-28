@@ -7,54 +7,50 @@ import TextField from 'material-ui/TextField'
 import {
   CognitoUserPool,
   AuthenticationDetails,
-  CognitoUser,
-  CognitoUserAttribute
+  CognitoUser
 } from "amazon-cognito-identity-js";
 
 import config from './../config/secrets.json'
 
-class Register extends Component {
+class ConfirmEmail extends Component {
   constructor() {
     super()
     this.state = {
       canSubmit: true,
       userName: "",
       email: "",
-      password: ""
+      confirmationCode: ""
     }
   }
 
-  register = (e) => {
+  confirm = (e) => {
     e.preventDefault()
 
-    const { userName, email, password } = this.state
+    const { userName, email, confirmationCode } = this.state
     const userPool = new CognitoUserPool({
       UserPoolId: config.userPoolId,
       ClientId: config.appClientId
     });
-    
-    const dataEmail = {
-        Name : 'email',
-        Value : email
-    };
-    const attributeEmail = new CognitoUserAttribute(dataEmail);
-    const attributeList = [attributeEmail];
-    
-    let cognitoUser
-        
-    userPool.signUp(userName, password, attributeList, null, function(err, result){
+    const cognitoUser = new CognitoUser({ Username: userName, Pool: userPool })
+
+    console.log(`Confirming ${userName} (${email}) with ${confirmationCode}`)
+
+    cognitoUser.confirmRegistration(confirmationCode, true, function(err, result){
         if (err) {
             alert(err);
             console.log(err)
             return;
         }
-        cognitoUser = result.user
         console.log('user name is ' + cognitoUser.getUsername());
     });
 
     if (cognitoUser) {
       this.setState({ user: cognitoUser })
     }
+  }
+
+  handleConfirmationCodeChange = (event) => {
+    this.setState({ confirmationCode: event.target.value })
   }
 
   handleUserNameChange = (event) => {
@@ -65,30 +61,25 @@ class Register extends Component {
     this.setState({ email: event.target.value })
   }
 
-  handlePasswordChange = (event) => {
-    this.setState({ password: event.target.value })
-  }
-
   render() {
-    const { userName, email, password } = this.state
+    const { userName, email, confirmationCode } = this.state
     
     return (
       <div style={{padding: '20px'}}>
-        <h2>Register</h2>
+        <h2>ConfirmEmail</h2>
 
         <form
-          onSubmit={this.register}
+          onSubmit={this.confirm}
         >
 
           <TextField
-            name="username"
+            name="userName"
             floatingLabelText="Username"
             value={userName}
             onChange={this.handleUserNameChange}            
             fullWidth
             required
           />
-
 
           <TextField
             name="email"
@@ -97,22 +88,20 @@ class Register extends Component {
             value={email}
             onChange={this.handleEmailChange}            
             fullWidth
-            required
           />
 
           <TextField
-            name="password"
-            type="password"
-            floatingLabelText="Password"
-            value={password}
-            onChange={this.handlePasswordChange}            
+            name="confirm"
+            floatingLabelText="Confirmation Code"
+            value={confirmationCode}
+            onChange={this.handleConfirmationCodeChange}            
             fullWidth
             required
           />
 
           <RaisedButton
             type="submit"
-            label="Register"
+            label="Confirm"
             secondary
             fullWidth
             style={{ marginTop: 20 }}
@@ -125,4 +114,4 @@ class Register extends Component {
   }
 }
 
-export default Register
+export default ConfirmEmail
