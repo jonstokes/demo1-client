@@ -4,8 +4,11 @@ import React, { Component } from 'react'
 import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 
-let AWS = require('aws-sdk')
-let AWSCognito = require('amazon-cognito-identity-js')
+import {
+  CognitoUserPool,
+  AuthenticationDetails,
+  CognitoUser
+} from "amazon-cognito-identity-js";
 
 import config from './../config/secrets.json'
 
@@ -21,29 +24,14 @@ class Register extends Component {
 
   register = (e) => {
     console.log(`Registering ${this.state.email} ${this.state.password}`)
-
-    AWS.config.region = config.cognitoRegion // Region
-    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: config.identityPoolId
+    
+    const { email, password } = this.state
+    const userPool = new CognitoUserPool({
+      UserPoolId: config.userPoolId,
+      ClientId: config.appClientId
     });
 
-    let poolData = { 
-      UserPoolId : config.userPoolId,
-      ClientId : config.appClientId
-    };
-    let userPool = new AWSCognito.CognitoUserPool(poolData);
-
-    let attributeList = [];
-
-    let dataEmail = {
-        Name : 'email',
-        Value : this.state.email
-    };
-    let attributeEmail = new AWSCognito.CognitoUserAttribute(dataEmail);
-
-    attributeList.push(attributeEmail);
-
-    userPool.signUp('email', 'password', attributeList, null, function(err, result){
+    userPool.signUp(email, password, [], null, function(err, result){
         if (err) {
             alert(err);
             console.log(err)
