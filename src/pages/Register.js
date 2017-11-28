@@ -17,30 +17,40 @@ class Register extends Component {
     super()
     this.state = {
       canSubmit: true,
+      userName: "",
       email: "",
       password: ""
     }
   }
 
   register = (e) => {
-    console.log(`Registering ${this.state.email} ${this.state.password}`)
-    
-    const { email, password } = this.state
+    e.preventDefault()
+
+    const { userName, email, password } = this.state
     const userPool = new CognitoUserPool({
       UserPoolId: config.userPoolId,
       ClientId: config.appClientId
     });
+    let cognitoUser
 
-    userPool.signUp(email, password, [], null, function(err, result){
+    userPool.signUp(userName, password, [], null, function(err, result){
         if (err) {
             alert(err);
             console.log(err)
             return;
         }
-        cognitoUser = result.user;
+        cognitoUser = result.user
         console.log('user name is ' + cognitoUser.getUsername());
     });
-}
+
+    if (cognitoUser) {
+      this.setState({ user: cognitoUser })
+    }
+  }
+
+  handleUserNameChange = (event) => {
+    this.setState({ userName: event.target.value })
+  }
 
   handleEmailChange = (event) => {
     this.setState({ email: event.target.value })
@@ -51,7 +61,7 @@ class Register extends Component {
   }
 
   render() {
-    const { email, password } = this.state
+    const { userName, email, password } = this.state
     
     return (
       <div style={{padding: '20px'}}>
@@ -60,6 +70,16 @@ class Register extends Component {
         <form
           onSubmit={this.register}
         >
+
+          <TextField
+            name="username"
+            floatingLabelText="Username"
+            value={userName}
+            onChange={this.handleUserNameChange}            
+            fullWidth
+            required
+          />
+
 
           <TextField
             name="email"
