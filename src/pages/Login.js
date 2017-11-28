@@ -51,28 +51,28 @@ class Login extends Component {
           AWS.config.update({ region: config.cognitoRegion })
 
           AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-              IdentityPoolId : config.identityPoolId, // your identity pool id here
-              Logins : {
-                  // Change the key below according to the specific region your user pool is in.
-                  [cognitoURI] : result.getIdToken().getJwtToken()
-              }
+            IdentityPoolId : config.identityPoolId, // your identity pool id here
+            Logins : {
+              // Change the key below according to the specific region your user pool is in.
+              [cognitoURI] : result.getIdToken().getJwtToken()
+            }
           });
           
           //refreshes credentials using AWS.CognitoIdentity.getCredentialsForIdentity()
           AWS.config.credentials.refresh((error) => {
               if (error) {
-                   console.error(error);
+                console.error(error);
               } else {
-                   // Instantiate aws sdk service objects now that the credentials have been updated.
-                   // example: var s3 = new AWS.S3();
-                   console.log('Successfully logged in!');
+                // Instantiate aws sdk service objects now that the credentials have been updated.
+                // example: var s3 = new AWS.S3();
+                console.log('Successfully logged in!');
               }
           });
       },
 
       onFailure: function(err) {
-          console.log(err)
-          alert(err)
+        console.log(err)
+        alert(err)
       }
     })
   }
