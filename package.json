@@ -6,7 +6,7 @@
     "amazon-cognito-identity-js": "^1.26.0",
     "aws-sdk": "^2.157.0",
     "crypto-js": "^3.1.9-1",
-    "found": "*",
+    "found": "^0.3.5",
     "found-relay": "v0.3.0-alpha.1",
     "material-ui": "^0.19.4",
     "prop-types": "*",
@@ -23,7 +23,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "relay-compiler": "relay-compiler --src src --schema graphql/schema.graphql"    
   },
   "devDependencies": {
     "babel-plugin-relay": "^1.4.1"

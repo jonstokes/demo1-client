@@ -1,5 +1,9 @@
 /* eslint-disable */
 
+import PropTypes from 'prop-types'
+import { routerShape } from 'found/lib/PropTypes'
+import { createFragmentContainer, graphql } from 'react-relay'
+
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import Register from './pages/Register'
@@ -27,4 +31,12 @@ class App extends Component {
   }
 }
 
-export default App;
+export default createFragmentContainer(
+  App,
+  graphql`
+    fragment App_viewer on Viewer {
+        isLoggedIn
+        userName
+    }
+  `,
+)

@@ -1,6 +1,5 @@
 schema {
   query: Root
-  mutation: Mutation
 }
 
 type Root {
