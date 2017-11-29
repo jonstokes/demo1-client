@@ -16,6 +16,10 @@ export async function invokeApig({
     throw new Error("User is not logged in");
   }
 
+  const preparedHeaders = Object.assign({}, {
+    'Content-Type': 'application/json'
+  }, headers)
+
   const signedRequest = sigV4Client
     .newClient({
       accessKey: AWS.config.credentials.accessKeyId,
@@ -27,7 +31,7 @@ export async function invokeApig({
     .signRequest({
       method,
       path,
-      headers,
+      headers: preparedHeaders,
       queryParams,
       body
     });
@@ -38,7 +42,8 @@ export async function invokeApig({
   const results = await fetch(signedRequest.url, {
     method,
     headers,
-    body
+    body,
+    mode: 'cors'
   });
 
   if (results.status !== 200) {

@@ -8,11 +8,13 @@ import { invokeApig } from "../libs/awsLib"
 
 class ViewerInfo extends Component {
   render() {
-    const userData = invokeApig({
+    let userData
+
+    let response = invokeApig({
       path: "/query",
       method: "GET"
-    })  
-    
+    }).then(data => console.log(data))
+
     return (
       <div style={{padding: '20px'}}>
         <h2>ViewerInfo</h2>
