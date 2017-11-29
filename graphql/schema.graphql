@@ -1,0 +1,14 @@
+schema {
+  query: Root
+  mutation: Mutation
+}
+
+type Root {
+  viewer: Viewer
+}
+
+type Viewer {
+  isLoggedIn: Boolean
+  userName: String
+  cognitoIdentityId: String
+}
