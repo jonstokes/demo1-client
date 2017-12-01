@@ -11,8 +11,9 @@ class ViewerInfo extends Component {
     let userData
 
     let response = invokeApig({
-      path: "/query",
-      method: "GET"
+      path: "/graphql",
+      method: "POST",
+      body: { query: '{__schema { queryType { name, fields { name, description} }}}' }
     }).then(data => console.log(data))
 
     return (
