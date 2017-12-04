@@ -97,10 +97,22 @@ export async function authUser() {
   return true;
 }
 
+export async function getCurrentUserToken() {
+  const currentUser = getCurrentUser();
+
+  if (currentUser === null) {
+    return '';
+  }
+
+  const userToken = await getUserToken(currentUser);
+
+  return userToken
+}
+
 export function signOutUser() {
   const currentUser = getCurrentUser();
 
-  if (currentUser !== null) {
+  if (currentUser !== null) {``
     currentUser.signOut();
   }
 
@@ -122,6 +134,56 @@ function getUserToken(currentUser) {
   });
 }
 
+export function fetchQuery(operation, variables, cacheConfig, uploadables) {
+  const options = uploadables
+    ? getOptionsWithFiles(operation, variables, uploadables)
+    : getOptionsWithoutFiles(operation, variables)
+
+  options.headers.Authorization = getCurrentUserToken()
+
+  // eslint-disable-next-line no-undef
+  return fetch('/hello', {
+    method: 'POST',
+    credentials: 'include',
+    ...options,
+  })
+    .then(response => response.json())
+    .then((data) => {
+      if (data.errors) {
+        throw data.errors.map(({ message }) => message)
+      }
+      return data
+    })
+}
+
+function getOptionsWithFiles(operation, variables, uploadables) {
+  // eslint-disable-next-line no-undef
+  const body = new FormData()
+  body.append('query', operation.text)
+  body.append('variables', JSON.stringify(variables))
+  Object.keys(uploadables).forEach((filename) => {
+    // eslint-disable-next-line no-prototype-builtins
+    if (uploadables.hasOwnProperty(filename)) {
+      body.append(filename, uploadables[filename])
+    }
+  })
+
+  return { body }
+}
+
+function getOptionsWithoutFiles(operation, variables) {
+  const body = JSON.stringify({
+    query: operation.text,
+    variables,
+  })
+
+  const headers = {
+    Accept: '*/*',
+    'Content-Type': 'application/json',
+  }
+
+  return { body, headers }
+}
 function getCurrentUser() {
   const userPool = new CognitoUserPool({
     UserPoolId: config.userPoolId,

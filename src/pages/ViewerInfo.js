@@ -4,17 +4,29 @@ import React, { Component } from 'react'
 import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 
-import { invokeApig } from "../libs/awsLib"
+import config from './../config/secrets.json'
+
+import getCurrentUserToken from './../libs/awslib';
 
 class ViewerInfo extends Component {
   render() {
-    let userData
+    const endpoint = `${config.invokeUrl}/hello`
 
-    let response = invokeApig({
-      path: "/graphql",
-      method: "POST",
-      body: { query: '{__schema { queryType { name, fields { name, description} }}}' }
-    }).then(data => console.log(data))
+    let response =  fetch(endpoint, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        Authorization: getCurrentUserToken()
+      },
+    })
+      .then(response => response.json())
+      .then((data) => {
+        if (data.errors) {
+          throw data.errors.map(({ message }) => message)
+        }
+        return data
+      })
+  
 
     return (
       <div style={{padding: '20px'}}>
