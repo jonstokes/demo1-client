@@ -122,18 +122,6 @@ export function signOutUser() {
   }
 }
 
-function getUserToken(currentUser) {
-  return new Promise((resolve, reject) => {
-    currentUser.getSession(function(err, session) {
-      if (err) {
-        reject(err);
-        return;
-      }
-      resolve(session.getIdToken().getJwtToken());
-    });
-  });
-}
-
 export function fetchQuery(operation, variables, cacheConfig, uploadables) {
   const options = uploadables
     ? getOptionsWithFiles(operation, variables, uploadables)
@@ -184,6 +172,19 @@ function getOptionsWithoutFiles(operation, variables) {
 
   return { body, headers }
 }
+
+function getUserToken(currentUser) {
+  return new Promise((resolve, reject) => {
+    currentUser.getSession(function(err, session) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(session.getIdToken().getJwtToken());
+    });
+  });
+}
+
 function getCurrentUser() {
   const userPool = new CognitoUserPool({
     UserPoolId: config.userPoolId,

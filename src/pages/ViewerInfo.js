@@ -6,8 +6,6 @@ import TextField from 'material-ui/TextField'
 
 import config from './../config/secrets.json'
 
-import getCurrentUserToken from './../libs/awslib';
-
 class ViewerInfo extends Component {
   render() {
     const endpoint = `${config.invokeUrl}/hello`
