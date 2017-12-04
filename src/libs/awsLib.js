@@ -112,7 +112,7 @@ export async function getCurrentUserToken() {
 export function signOutUser() {
   const currentUser = getCurrentUser();
 
-  if (currentUser !== null) {``
+  if (currentUser !== null) {
     currentUser.signOut();
   }
 
