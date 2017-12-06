@@ -98,9 +98,17 @@ export async function authUser() {
 }
 
 export async function getCurrentUserToken() {
+  if (
+    AWS.config.credentials &&
+    Date.now() < AWS.config.credentials.expireTime - 60000
+  ) {
+    console.log('Credentials are live');
+  }
+
   const currentUser = getCurrentUser();
 
   if (currentUser === null) {
+    console.log('currentUser is null')
     return '';
   }
 
@@ -120,6 +128,25 @@ export function signOutUser() {
     AWS.config.credentials.clearCachedId();
     AWS.config.credentials = new AWS.CognitoIdentityCredentials({});
   }
+}
+
+function getUnauthorizedCredentials(callback) {
+  console.log("Getting temporary for unauthorized user credentials")
+
+  AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: config.identityPoolId,
+  })
+
+  AWS.config.update({ region: config.cognitoRegion })
+  
+  AWS.config.credentials.get(function(err) {
+    if (err) {
+      console.log(err.message ? err.message : err)
+      return
+    }
+
+    callback()
+  })
 }
 
 export function fetchQuery(operation, variables, cacheConfig, uploadables) {

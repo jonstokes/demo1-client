@@ -12,31 +12,29 @@ class ViewerInfo extends Component {
   render() {
     const endpoint = `${config.invokeUrl}/hello`
 
-    getCurrentUserToken().then((token) => {
+    const data = getCurrentUserToken().then((token) => {
       let response =  fetch(endpoint, {
         method: 'POST',
         mode: 'cors',      
         headers: {
           Authorization: token
         },
+        body: JSON.stringify({ query: '{ viewer }' })
       })
         .then(response => response.json())
         .then((data) => {
           if (data.errors) {
             throw data.errors.map(({ message }) => message)
           }
+          console.log(data)
           return data
         })  
     })
 
-  
-
     return (
       <div style={{padding: '20px'}}>
         <h2>ViewerInfo</h2>
-
-        {JSON.stringify(userData)}
-
+          {JSON.stringify(data)}
       </div>
     )
   }
